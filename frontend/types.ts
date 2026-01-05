@@ -50,7 +50,7 @@ export interface InvestigationCase {
   title: string;
   description: string;
   status: CaseStatus;
-  suspects: Suspect[];
+  parties: Suspect[];
   clues: Clue[];
   timeline: TimelineEvent[];
   statements: Statement[];

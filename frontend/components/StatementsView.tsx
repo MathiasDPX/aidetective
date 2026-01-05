@@ -4,11 +4,24 @@ import { Statement, Suspect } from '../types';
 interface StatementsViewProps {
   statements: Statement[];
   suspects: Suspect[];
+  onAddStatement?: (statement: Partial<Statement>) => void;
 }
 
-const StatementsView: React.FC<StatementsViewProps> = ({ statements, suspects }) => {
+const StatementsView: React.FC<StatementsViewProps> = ({ statements, suspects, onAddStatement }) => {
   const [filterBySuspect, setFilterBySuspect] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<'time' | 'speaker'>('time');
+  const [isAdding, setIsAdding] = useState(false);
+  const [newStatement, setNewStatement] = useState<Partial<Statement>>({ content: '', speakerId: '', speakerName: '', timestamp: '', context: '' });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (onAddStatement && newStatement.content && newStatement.speakerId) {
+      const suspect = suspects.find(s => s.id === newStatement.speakerId);
+      onAddStatement({ ...newStatement, speakerName: suspect?.name || 'Unknown' });
+      setNewStatement({ content: '', speakerId: '', speakerName: '', timestamp: '', context: '' });
+      setIsAdding(false);
+    }
+  };
 
   const filteredStatements = filterBySuspect
     ? statements.filter(s => s.speakerId === filterBySuspect)
@@ -30,9 +43,60 @@ const StatementsView: React.FC<StatementsViewProps> = ({ statements, suspects })
   return (
     <div className="animate-in fade-in duration-700">
       <div className="flex justify-between items-end mb-8">
-        <h2 className="text-4xl font-serif text-white">Recorded Statements</h2>
-        <span className="text-xs text-white/30 uppercase tracking-widest">{statements.length} Testimonies</span>
+        <div>
+          <h2 className="text-4xl font-serif text-white">Recorded Statements</h2>
+          <span className="text-xs text-white/30 uppercase tracking-widest">{statements.length} Testimonies</span>
+        </div>
+        <button
+          onClick={() => setIsAdding(!isAdding)}
+          className="px-4 py-2 border border-[#d4af37] text-[#d4af37] text-xs uppercase tracking-widest hover:bg-[#d4af37] hover:text-[#0a0a0a] transition-all"
+        >
+          {isAdding ? 'Cancel' : '+ Add Statement'}
+        </button>
       </div>
+
+      {isAdding && (
+        <form onSubmit={handleSubmit} className="mb-12 p-6 border border-white/10 bg-white/5 space-y-4">
+          <div>
+            <label className="block text-[10px] uppercase text-white/40 mb-1">Speaker</label>
+            <select
+              className="w-full bg-[#0a0a0a] border border-white/10 text-white p-2 text-sm focus:border-[#d4af37] outline-none"
+              value={newStatement.speakerId}
+              onChange={e => setNewStatement({ ...newStatement, speakerId: e.target.value })}
+            >
+              <option value="">Select a suspect...</option>
+              {suspects.map(s => (
+                <option key={s.id} value={s.id}>{s.name}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-[10px] uppercase text-white/40 mb-1">Statement</label>
+            <textarea
+              className="w-full bg-[#0a0a0a] border border-white/10 text-white p-2 text-sm focus:border-[#d4af37] outline-none h-32"
+              value={newStatement.content}
+              onChange={e => setNewStatement({ ...newStatement, content: e.target.value })}
+              placeholder="What did they say?"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-[10px] uppercase text-white/40 mb-1">Timestamp/Context</label>
+              <input
+                className="w-full bg-[#0a0a0a] border border-white/10 text-white p-2 text-sm focus:border-[#d4af37] outline-none"
+                value={newStatement.timestamp}
+                onChange={e => setNewStatement({ ...newStatement, timestamp: e.target.value })}
+                placeholder="e.g. During initial interrogation"
+              />
+            </div>
+          </div>
+          <div className="flex justify-end pt-2">
+            <button type="submit" className="px-6 py-2 bg-[#d4af37] text-black text-xs uppercase font-bold tracking-widest">
+              Log Testimony
+            </button>
+          </div>
+        </form>
+      )}
 
       {/* Filters */}
       <div className="mb-8 flex flex-wrap gap-4 items-center border-b border-white/5 pb-6">
@@ -40,11 +104,10 @@ const StatementsView: React.FC<StatementsViewProps> = ({ statements, suspects })
           <span className="text-[10px] uppercase tracking-widest text-white/40">Filter:</span>
           <button
             onClick={() => setFilterBySuspect(null)}
-            className={`px-4 py-1.5 text-xs uppercase tracking-widest transition-all ${
-              filterBySuspect === null
+            className={`px-4 py-1.5 text-xs uppercase tracking-widest transition-all ${filterBySuspect === null
                 ? 'bg-[#d4af37]/20 border border-[#d4af37] text-[#d4af37]'
                 : 'bg-white/5 border border-white/10 text-white/40 hover:text-white/70'
-            }`}
+              }`}
           >
             All Speakers
           </button>
@@ -52,11 +115,10 @@ const StatementsView: React.FC<StatementsViewProps> = ({ statements, suspects })
             <button
               key={suspect.id}
               onClick={() => setFilterBySuspect(suspect.id)}
-              className={`px-4 py-1.5 text-xs uppercase tracking-widest transition-all ${
-                filterBySuspect === suspect.id
+              className={`px-4 py-1.5 text-xs uppercase tracking-widest transition-all ${filterBySuspect === suspect.id
                   ? 'bg-[#d4af37]/20 border border-[#d4af37] text-[#d4af37]'
                   : 'bg-white/5 border border-white/10 text-white/40 hover:text-white/70'
-              }`}
+                }`}
             >
               {suspect.name}
             </button>
@@ -66,21 +128,19 @@ const StatementsView: React.FC<StatementsViewProps> = ({ statements, suspects })
           <span className="text-[10px] uppercase tracking-widest text-white/40">Sort:</span>
           <button
             onClick={() => setSortBy('time')}
-            className={`px-4 py-1.5 text-xs uppercase tracking-widest transition-all ${
-              sortBy === 'time'
+            className={`px-4 py-1.5 text-xs uppercase tracking-widest transition-all ${sortBy === 'time'
                 ? 'bg-white/10 text-white'
                 : 'bg-white/5 text-white/40 hover:text-white/70'
-            }`}
+              }`}
           >
             Time
           </button>
           <button
             onClick={() => setSortBy('speaker')}
-            className={`px-4 py-1.5 text-xs uppercase tracking-widest transition-all ${
-              sortBy === 'speaker'
+            className={`px-4 py-1.5 text-xs uppercase tracking-widest transition-all ${sortBy === 'speaker'
                 ? 'bg-white/10 text-white'
                 : 'bg-white/5 text-white/40 hover:text-white/70'
-            }`}
+              }`}
           >
             Speaker
           </button>

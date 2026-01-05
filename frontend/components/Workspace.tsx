@@ -17,6 +17,8 @@ interface WorkspaceProps {
 
 type Tab = 'suspects' | 'timeline' | 'clues' | 'statements' | 'theories' | 'accusation';
 
+import { dbService } from '../services/dbService';
+
 const Workspace: React.FC<WorkspaceProps> = ({ activeCase, onBack, onUpdateCase }) => {
   const [activeTab, setActiveTab] = useState<Tab>('suspects');
 
@@ -29,20 +31,75 @@ const Workspace: React.FC<WorkspaceProps> = ({ activeCase, onBack, onUpdateCase 
     { id: 'accusation', label: 'Accusation', icon: <GavelIcon /> },
   ];
 
+  /* Handlers for adding new items */
+  const handleAddTimelineEvent = async (event: Partial<any>) => {
+    try {
+      const newEvent = await dbService.addTimelineEvent(activeCase.id, event);
+      onUpdateCase({ ...activeCase, timeline: [...activeCase.timeline, newEvent] });
+    } catch (e) {
+      console.error("Failed to add timeline event", e);
+    }
+  };
+
+  const handleAddSuspect = async (suspect: Partial<any>) => {
+    console.log("Workspace handleAddSuspect called", suspect);
+    try {
+      // Add default placeholder if missing
+      const s = { ...suspect, role: suspect.role || 'Unknown', description: suspect.description || 'No description' };
+      console.log("Sending suspect to dbService", s);
+      const newSuspect = await dbService.addSuspect(activeCase.id, s);
+      console.log("DbService returned:", newSuspect);
+      onUpdateCase({ ...activeCase, parties: [...activeCase.parties, newSuspect] });
+    } catch (e: any) {
+      console.error("Failed to add suspect", e);
+      alert(`Failed to save suspect: ${e.message}`);
+    }
+  };
+
+  const handleAddClue = async (clue: Partial<any>) => {
+    try {
+      const newClue = await dbService.addClue(activeCase.id, clue);
+      onUpdateCase({ ...activeCase, clues: [...activeCase.clues, newClue] });
+    } catch (e: any) {
+      console.error("Failed to add clue", e);
+      alert(`Failed to save clue: ${e.message}`);
+    }
+  };
+
+  const handleAddStatement = async (statement: Partial<any>) => {
+    try {
+      const newSt = await dbService.addStatement(activeCase.id, statement);
+      onUpdateCase({ ...activeCase, statements: [...activeCase.statements, newSt] });
+    } catch (e: any) {
+      console.error("Failed to add statement", e);
+      alert(`Failed to save statement: ${e.message}`);
+    }
+  };
+
+  const handleAddTheory = async (theory: Partial<any>) => {
+    try {
+      const newTh = await dbService.addTheory(activeCase.id, theory);
+      onUpdateCase({ ...activeCase, theories: [...activeCase.theories, newTh] });
+    } catch (e: any) {
+      console.error("Failed to add theory", e);
+      alert(`Failed to save theory: ${e.message}`);
+    }
+  };
+
   return (
     <div className="flex h-screen overflow-hidden bg-[#050505]">
       {/* Sidebar Navigation */}
       <nav className="w-20 lg:w-64 border-r border-white/5 flex flex-col bg-[#0a0a0a]">
         <div className="p-6 border-b border-white/5 flex items-center gap-3">
-          <button 
+          <button
             onClick={onBack}
             className="p-2 hover:bg-white/5 rounded-full text-white/40 hover:text-white transition-colors"
           >
             <BackIcon />
           </button>
           <div className="hidden lg:block">
-             <span className="text-[10px] uppercase tracking-widest text-[#d4af37] block">Active Case</span>
-             <h2 className="text-xs font-semibold text-white/80 uppercase truncate">{activeCase.title}</h2>
+            <span className="text-[10px] uppercase tracking-widest text-[#d4af37] block">Active Case</span>
+            <h2 className="text-xs font-semibold text-white/80 uppercase truncate">{activeCase.title}</h2>
           </div>
         </div>
 
@@ -51,9 +108,8 @@ const Workspace: React.FC<WorkspaceProps> = ({ activeCase, onBack, onUpdateCase 
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`w-full flex items-center px-6 py-4 gap-4 transition-all relative ${
-                activeTab === tab.id ? 'text-[#d4af37] bg-white/5' : 'text-white/40 hover:text-white/70 hover:bg-white/5'
-              }`}
+              className={`w-full flex items-center px-6 py-4 gap-4 transition-all relative ${activeTab === tab.id ? 'text-[#d4af37] bg-white/5' : 'text-white/40 hover:text-white/70 hover:bg-white/5'
+                }`}
             >
               {activeTab === tab.id && <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#d4af37]" />}
               {tab.icon}
@@ -63,7 +119,7 @@ const Workspace: React.FC<WorkspaceProps> = ({ activeCase, onBack, onUpdateCase 
         </div>
 
         <div className="p-6 text-[10px] text-white/20 uppercase tracking-widest border-t border-white/5 hidden lg:block">
-          &copy; 1924 Thorne Investigation
+          &copy; 2024 Benoit Blanc Investigation
         </div>
       </nav>
 
@@ -71,46 +127,51 @@ const Workspace: React.FC<WorkspaceProps> = ({ activeCase, onBack, onUpdateCase 
       <main className="flex-1 overflow-y-auto relative p-8 lg:p-12">
         <div className="max-w-4xl mx-auto">
           {activeTab === 'suspects' && (
-            <SuspectsView 
-              suspects={activeCase.suspects} 
+            <SuspectsView
+              suspects={activeCase.parties}
               statements={activeCase.statements}
               onUpdateSuspect={(suspect) => {
                 const updated = {
                   ...activeCase,
-                  suspects: activeCase.suspects.map(s => s.id === suspect.id ? suspect : s)
+                  parties: activeCase.parties.map(s => s.id === suspect.id ? suspect : s)
                 };
                 onUpdateCase(updated);
               }}
+              onAddSuspect={handleAddSuspect}
             />
           )}
           {activeTab === 'timeline' && (
-            <TimelineView 
+            <TimelineView
               timeline={activeCase.timeline}
-              suspects={activeCase.suspects}
+              suspects={activeCase.parties}
+              onAddEvent={handleAddTimelineEvent}
             />
           )}
           {activeTab === 'clues' && (
-            <CluesView 
+            <CluesView
               clues={activeCase.clues}
-              suspects={activeCase.suspects}
+              suspects={activeCase.parties}
+              onAddClue={handleAddClue}
             />
           )}
           {activeTab === 'statements' && (
-            <StatementsView 
+            <StatementsView
               statements={activeCase.statements}
-              suspects={activeCase.suspects}
+              suspects={activeCase.parties}
+              onAddStatement={handleAddStatement}
             />
           )}
           {activeTab === 'theories' && (
-            <TheoriesView 
+            <TheoriesView
               theories={activeCase.theories}
-              suspects={activeCase.suspects}
+              suspects={activeCase.parties}
               clues={activeCase.clues}
+              onAddTheory={handleAddTheory}
             />
           )}
           {activeTab === 'accusation' && (
-            <AccusationView 
-              suspects={activeCase.suspects}
+            <AccusationView
+              suspects={activeCase.parties}
               onPresentCase={(suspectId, reasoning) => {
                 const updated = {
                   ...activeCase,
@@ -123,9 +184,10 @@ const Workspace: React.FC<WorkspaceProps> = ({ activeCase, onBack, onUpdateCase 
         </div>
       </main>
 
+
       {/* Persistent AI Assistant */}
       <aside className="w-80 lg:w-96 border-l border-white/5 bg-[#0a0a0a] flex flex-col">
-        <AIAssistant 
+        <AIAssistant
           activeCase={activeCase}
           onAnalyzeTimeline={() => setActiveTab('timeline')}
           onAnalyzeSuspect={(id) => {

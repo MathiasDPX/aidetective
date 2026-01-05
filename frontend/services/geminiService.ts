@@ -1,5 +1,7 @@
-import { GoogleGenAI } from "@google/genai";
 import { InvestigationCase } from "../types";
+
+const HACK_CLUB_API_URL = "/api/ai/proxy/v1/chat/completions";
+const MODEL = "gpt-4o";
 
 const SYSTEM_INSTRUCTION = `
 You are Elias Thorne, a world-renowned private investigator. 
@@ -16,69 +18,76 @@ Always refer to the case files provided in the context.
 `;
 
 export class DetectiveAI {
-  private ai: GoogleGenAI | null = null;
+  private apiKey: string;
 
   constructor() {
-    // Use Vite's import.meta.env for environment variables
-    const apiKey = import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.GEMINI_API_KEY || '';
-    if (apiKey) {
-      this.ai = new GoogleGenAI({ apiKey });
-    }
+    this.apiKey = import.meta.env.VITE_HACKCLUB_API_KEY || '';
   }
 
   async analyzeCase(activeCase: InvestigationCase, userMessage: string): Promise<string> {
-    if (!this.ai) {
-      return "I apologize, but my connection to the investigation network seems to be down. Please check your API configuration.";
+    if (!this.apiKey) {
+      console.warn("Hack Club API Key is missing. Please set VITE_HACKCLUB_API_KEY in .env.local");
+      return "I seem to have misplaced my notebook! (API Key missing)";
     }
 
     const caseContext = `
     CURRENT CASE DATA:
     Title: ${activeCase.title}
     Description: ${activeCase.description}
-    Suspects: ${activeCase.suspects.map(s => `${s.name} (${s.role}): ${s.description}. Alibi: ${s.alibi}. Motive: ${s.motive}`).join(' | ')}
-    Clues: ${activeCase.clues.map(c => `${c.title}: ${c.description} (Source: ${c.source}, Confidence: ${c.confidence})`).join(' | ')}
-    Timeline: ${activeCase.timeline.map(t => `${t.time} - ${t.description} ${t.isGap ? '[GAP]' : ''}`).join(' | ')}
-    Statements: ${activeCase.statements.map(s => `${s.speakerName} (${s.timestamp}): "${s.content}"`).join(' | ')}
+    Suspects: ${activeCase.parties.map(s => `${s.name} (${s.role}): ${s.description}. Alibi: ${s.alibi}`).join(' | ')}
+    Clues: ${activeCase.clues.map(c => `${c.title}: ${c.description} (Source: ${c.source})`).join(' | ')}
+    Timeline: ${activeCase.timeline.map(t => `${t.time} - ${t.description}`).join(' | ')}
+    Statements: ${activeCase.statements.map(s => `${s.speakerName}: "${s.content}"`).join(' | ')}
     Theories: ${activeCase.theories.map(t => `${t.title}: ${t.content}`).join(' | ')}
     `;
 
     try {
-      const response = await this.ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
-        contents: [
-          { text: `CONTEXT: ${caseContext}` },
-          { text: `USER QUESTION: ${userMessage}` }
-        ],
-        config: {
-          systemInstruction: SYSTEM_INSTRUCTION,
-          temperature: 0.8,
+      const response = await fetch(HACK_CLUB_API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.apiKey}`
         },
+        body: JSON.stringify({
+          model: MODEL,
+          messages: [
+            { role: "system", content: SYSTEM_INSTRUCTION },
+            { role: "user", content: `CONTEXT: ${caseContext}\n\nUSER QUESTION: ${userMessage}` }
+          ],
+          temperature: 0.8
+        })
       });
 
-      return response.text || "I'm afraid I've lost my train of thought, dear friend. Let's look at those clues again.";
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`API request failed: ${response.status} - ${errorText}`);
+      }
+
+      const data = await response.json();
+      return data.choices?.[0]?.message?.content || "I'm afraid I've lost my train of thought.";
+
     } catch (error) {
-      console.error("Gemini API Error:", error);
-      return "The fog seems to have settled in on my reasoning. Let me take a moment to clear my head.";
+      console.error("AI API Error:", error);
+      return "The connection is fuzzy. I cannot reach my conclusions right now.";
     }
   }
 
-  // Quick analysis methods for prompt shortcuts
+  // Helper methods for quick prompts - kept for compatibility if needed, though mostly handled by generic prompt now
   async analyzeTimeline(activeCase: InvestigationCase): Promise<string> {
     return this.analyzeCase(activeCase, "Analyze the timeline for any inconsistencies, gaps, or suspicious patterns.");
   }
 
   async analyzeSuspect(activeCase: InvestigationCase, suspectId: string): Promise<string> {
-    const suspect = activeCase.suspects.find(s => s.id === suspectId);
-    if (!suspect) return "I don't have that suspect in my files, I'm afraid.";
+    const suspect = activeCase.parties.find(s => s.id === suspectId);
+    if (!suspect) return "I don't have that suspect in my files.";
     return this.analyzeCase(activeCase, `Analyze suspect ${suspect.name}. Examine their alibi, motive, and any statements they've made.`);
   }
 
   async challengeTheory(activeCase: InvestigationCase, theoryId: string): Promise<string> {
     const theory = activeCase.theories.find(t => t.id === theoryId);
-    if (!theory) return "I don't see that theory in the case files.";
+    if (!theory) return "I don't see that theory.";
     return this.analyzeCase(activeCase, `Challenge this theory: "${theory.title} - ${theory.content}". Find any flaws or contradictions.`);
   }
 }
 
 export const detectiveAI = new DetectiveAI();
-

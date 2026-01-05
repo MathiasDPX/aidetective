@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { InvestigationCase, Message } from '../types';
 import { detectiveAI } from '../services/geminiService';
@@ -11,10 +10,10 @@ interface AIAssistantProps {
 
 const AIAssistant: React.FC<AIAssistantProps> = ({ activeCase, onAnalyzeTimeline, onAnalyzeSuspect }) => {
   const [messages, setMessages] = useState<Message[]>([
-    { 
+    {
       id: 'welcome',
-      role: 'assistant', 
-      content: "Well now, what have we here? A tangled web of intentions. I'm Elias Thorne, at your service. Let's dig through the dirt and find the gems of truth, shall we?",
+      role: 'assistant',
+      content: "I am ready to assist you with the case. What shall we investigate?",
       timestamp: new Date()
     }
   ]);
@@ -52,10 +51,11 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ activeCase, onAnalyzeTimeline
       };
       setMessages(prev => [...prev, assistantMessage]);
     } catch (err) {
+      console.error(err);
       const errorMessage: Message = {
         id: `msg-${Date.now() + 1}`,
         role: 'assistant',
-        content: "Pardon me, I seem to have lost my spectacles. Could you repeat that inquiry?",
+        content: "I apologize, but I was unable to process your request at this moment.",
         timestamp: new Date()
       };
       setMessages(prev => [...prev, errorMessage]);
@@ -70,7 +70,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ activeCase, onAnalyzeTimeline
       await handleSend("Analyze the timeline for any inconsistencies, gaps, or suspicious patterns.");
     } else if (type === 'suspect' && id) {
       if (onAnalyzeSuspect) onAnalyzeSuspect(id);
-      const suspect = activeCase.suspects.find(s => s.id === id);
+      const suspect = activeCase.parties.find(s => s.id === id); // Use parties as suspects
       if (suspect) {
         await handleSend(`Analyze suspect ${suspect.name}. Examine their alibi, motive, and any statements they've made.`);
       }
@@ -83,79 +83,78 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ activeCase, onAnalyzeTimeline
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full bg-[#050505] border-l border-white/5">
       {/* Header */}
-      <div className="p-6 border-b border-white/5 flex items-center gap-4 bg-gradient-to-r from-transparent to-white/[0.02]">
-        <div className="w-12 h-12 rounded-full border border-[#d4af37] overflow-hidden flex-shrink-0 relative">
-          <div className="absolute inset-0 bg-[#d4af37]/20 flex items-center justify-center">
-             <span className="text-xl font-serif text-[#d4af37]">T</span>
-          </div>
-          <img src="https://picsum.photos/seed/detective/100/100" alt="Detective Thorne" className="w-full h-full object-cover opacity-60 grayscale mix-blend-multiply" />
-        </div>
+      <div className="p-6 border-b border-white/5 flex items-center justify-between bg-[#0a0a0a]">
         <div>
-          <h3 className="text-sm font-serif text-white font-medium">Elias Thorne</h3>
-          <div className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-            <span className="text-[9px] uppercase tracking-widest text-white/30">Analyzing Records</span>
-          </div>
+          <h3 className="text-sm font-medium text-white tracking-wide uppercase">Investigation Assistant</h3>
+          <p className="text-xs text-white/40 mt-1">Powered by Advanced AI</p>
         </div>
+        <div className={`w-2 h-2 rounded-full ${isTyping ? 'bg-yellow-500 animate-pulse' : 'bg-green-500/50'}`} />
       </div>
 
       {/* Quick Prompts */}
-      <div className="px-6 pt-4 pb-2 border-b border-white/5">
+      <div className="px-6 py-4 border-b border-white/5 bg-[#0a0a0a]/50">
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => handleQuickPrompt('timeline')}
-            className="px-3 py-1.5 text-[10px] uppercase tracking-widest bg-white/5 border border-white/10 text-white/50 hover:text-white hover:border-[#d4af37]/30 transition-all"
+            disabled={isTyping}
+            className="px-3 py-1.5 text-[10px] uppercase tracking-wider bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white/60 hover:text-white transition-all rounded-sm disabled:opacity-50"
           >
             Analyze Timeline
           </button>
-          {activeCase.suspects.slice(0, 2).map(suspect => (
+          {/* Fallback to empty array if parties is undefined, though it should be there */}
+          {(activeCase.parties || []).slice(0, 3).map(suspect => (
             <button
               key={suspect.id}
               onClick={() => handleQuickPrompt('suspect', suspect.id)}
-              className="px-3 py-1.5 text-[10px] uppercase tracking-widest bg-white/5 border border-white/10 text-white/50 hover:text-white hover:border-[#d4af37]/30 transition-all"
+              disabled={isTyping}
+              className="px-3 py-1.5 text-[10px] uppercase tracking-wider bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white/60 hover:text-white transition-all rounded-sm disabled:opacity-50"
             >
-              Analyze {suspect.name.split(' ')[0]}
+              Suspect: {suspect.name.split(' ')[0]}
             </button>
           ))}
         </div>
       </div>
 
       {/* Messages */}
-      <div 
+      <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto p-6 space-y-6 scroll-smooth"
+        className="flex-1 overflow-y-auto p-6 space-y-6"
       >
         {messages.map((m) => (
-          <div key={m.id} className={`flex flex-col ${m.role === 'user' ? 'items-end' : 'items-start'}`}>
-            <span className="text-[8px] uppercase tracking-[0.2em] text-white/20 mb-2">
-              {m.role === 'assistant' ? 'Detective Thorne' : 'Investigator'}
+          <div key={m.id} className={`flex flex-col ${m.role === 'user' ? 'items-end' : 'items-start'} max-w-full group`}>
+            <span className="text-[9px] uppercase tracking-widest text-white/20 mb-2 px-1">
+              {m.role === 'assistant' ? 'AI Analyst' : 'You'}
             </span>
-            <div className={`max-w-[85%] p-4 text-sm leading-relaxed ${
-              m.role === 'assistant' 
-              ? 'bg-[#121212] border border-white/5 text-white/70 italic font-serif' 
-              : 'bg-[#d4af37]/10 border border-[#d4af37]/20 text-white/80'
-            }`}>
+            <div className={`p-4 rounded-sm text-sm leading-relaxed max-w-[90%] ${m.role === 'assistant'
+                ? 'bg-[#111] border border-white/10 text-white/80'
+                : 'bg-white/5 border border-white/10 text-white/90'
+              }`}>
               {m.content}
             </div>
+            <span className="text-[8px] text-white/10 mt-1 px-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              {m.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </span>
           </div>
         ))}
         {isTyping && (
           <div className="flex flex-col items-start animate-pulse">
-            <span className="text-[8px] uppercase tracking-[0.2em] text-white/20 mb-2">Detective Thorne is thinking...</span>
-            <div className="bg-white/5 border border-white/5 p-4 flex gap-1">
-              <div className="w-1.5 h-1.5 bg-[#d4af37] rounded-full" />
-              <div className="w-1.5 h-1.5 bg-[#d4af37] rounded-full opacity-60" />
-              <div className="w-1.5 h-1.5 bg-[#d4af37] rounded-full opacity-30" />
+            <span className="text-[9px] uppercase tracking-widest text-white/20 mb-2 px-1">AI Analyst</span>
+            <div className="bg-[#111] border border-white/10 p-4 rounded-sm">
+              <div className="flex gap-1.5">
+                <div className="w-1 h-1 bg-white/40 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                <div className="w-1 h-1 bg-white/40 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                <div className="w-1 h-1 bg-white/40 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+              </div>
             </div>
           </div>
         )}
       </div>
 
       {/* Input */}
-      <div className="p-6 border-t border-white/5 bg-[#0a0a0a]">
-        <div className="relative">
+      <div className="p-6 bg-[#0a0a0a] border-t border-white/5">
+        <div className="relative group">
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -165,24 +164,22 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ activeCase, onAnalyzeTimeline
                 handleSend();
               }
             }}
-            placeholder="Ask for an analysis..."
-            className="w-full bg-white/5 border border-white/10 p-4 pr-12 text-sm text-white/80 focus:border-[#d4af37] outline-none h-24 resize-none transition-all placeholder:text-white/20"
+            placeholder="Enter your inquiry..."
+            disabled={isTyping}
+            className="w-full bg-[#111] border border-white/10 focus:border-white/20 p-4 pr-12 text-sm text-white/90 outline-none h-24 resize-none transition-all placeholder:text-white/20 rounded-sm disabled:opacity-50"
           />
-          <button 
+          <button
             onClick={() => handleSend()}
             disabled={!input.trim() || isTyping}
-            className="absolute bottom-4 right-4 text-white/30 hover:text-[#d4af37] disabled:opacity-0 transition-all"
+            className="absolute bottom-4 right-4 p-2 text-white/40 hover:text-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
           </button>
         </div>
-        <div className="mt-3 flex items-center justify-between text-[8px] uppercase tracking-widest text-white/20">
-          <span>Shift+Enter for new line</span>
-          <div className="flex gap-2">
-            <button className="hover:text-white transition-colors">Voice Link</button>
-            <span>|</span>
-            <button className="hover:text-white transition-colors">History</button>
-          </div>
+        <div className="mt-3 text-[9px] uppercase tracking-widest text-white/20 text-right">
+          Press Enter to send
         </div>
       </div>
     </div>

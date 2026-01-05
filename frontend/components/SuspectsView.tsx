@@ -6,26 +6,98 @@ interface SuspectsViewProps {
   suspects: Suspect[];
   statements: Statement[];
   onUpdateSuspect?: (suspect: Suspect) => void;
+  onAddSuspect?: (suspect: Partial<Suspect>) => void;
 }
 
-const SuspectsView: React.FC<SuspectsViewProps> = ({ suspects, statements, onUpdateSuspect }) => {
+const SuspectsView: React.FC<SuspectsViewProps> = ({ suspects, statements, onUpdateSuspect, onAddSuspect }) => {
   const [selectedSuspect, setSelectedSuspect] = useState<Suspect | null>(suspects[0]);
+  const [isAdding, setIsAdding] = useState(false);
+  const [newSuspect, setNewSuspect] = useState<Partial<Suspect>>({ name: '', role: '', motive: '', alibi: '' });
+
+  const handleAdd = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("SuspectsView handleAdd triggered", newSuspect);
+    if (onAddSuspect && newSuspect.name && newSuspect.role) {
+      console.log("Calling onAddSuspect");
+      onAddSuspect(newSuspect);
+      setNewSuspect({ name: '', role: '', motive: '', alibi: '' });
+      setIsAdding(false);
+    } else {
+      console.warn("Validation failed or handler missing:", { onAddSuspect: !!onAddSuspect, name: newSuspect.name, role: newSuspect.role });
+      alert("Please fill in at least the Name and Role.");
+    }
+  };
 
   return (
     <div className="animate-in fade-in duration-700">
       <div className="flex justify-between items-end mb-8">
-        <h2 className="text-4xl font-serif text-white">Suspect List</h2>
-        <span className="text-xs text-white/30 uppercase tracking-widest">{suspects.length} Individuals of Interest</span>
+        <div>
+          <h2 className="text-4xl font-serif text-white">Suspect List</h2>
+          <span className="text-xs text-white/30 uppercase tracking-widest">{suspects.length} Individuals of Interest</span>
+        </div>
+        <button
+          onClick={() => setIsAdding(!isAdding)}
+          className="px-4 py-2 border border-[#d4af37] text-[#d4af37] text-xs uppercase tracking-widest hover:bg-[#d4af37] hover:text-[#0a0a0a] transition-all"
+        >
+          {isAdding ? 'Cancel' : '+ Add Suspect'}
+        </button>
       </div>
+
+      {isAdding && (
+        <form onSubmit={handleAdd} className="mb-12 p-6 border border-white/10 bg-white/5 space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-[10px] uppercase text-white/40 mb-1">Name</label>
+              <input
+                className="w-full bg-[#0a0a0a] border border-white/10 text-white p-2 text-sm focus:border-[#d4af37] outline-none"
+                value={newSuspect.name}
+                onChange={e => setNewSuspect({ ...newSuspect, name: e.target.value })}
+                placeholder="John Doe"
+              />
+            </div>
+            <div>
+              <label className="block text-[10px] uppercase text-white/40 mb-1">Role</label>
+              <input
+                className="w-full bg-[#0a0a0a] border border-white/10 text-white p-2 text-sm focus:border-[#d4af37] outline-none"
+                value={newSuspect.role}
+                onChange={e => setNewSuspect({ ...newSuspect, role: e.target.value })}
+                placeholder="Gardener"
+              />
+            </div>
+            <div>
+              <label className="block text-[10px] uppercase text-white/40 mb-1">Alibi</label>
+              <input
+                className="w-full bg-[#0a0a0a] border border-white/10 text-white p-2 text-sm focus:border-[#d4af37] outline-none"
+                value={newSuspect.alibi}
+                onChange={e => setNewSuspect({ ...newSuspect, alibi: e.target.value })}
+                placeholder="Where were they?"
+              />
+            </div>
+            <div>
+              <label className="block text-[10px] uppercase text-white/40 mb-1">Motive</label>
+              <input
+                className="w-full bg-[#0a0a0a] border border-white/10 text-white p-2 text-sm focus:border-[#d4af37] outline-none"
+                value={newSuspect.motive}
+                onChange={e => setNewSuspect({ ...newSuspect, motive: e.target.value })}
+                placeholder="Why would they do it?"
+              />
+            </div>
+          </div>
+          <div className="flex justify-end pt-2">
+            <button type="submit" className="px-6 py-2 bg-[#d4af37] text-black text-xs uppercase font-bold tracking-widest">
+              Create Profile
+            </button>
+          </div>
+        </form>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
         {suspects.map((s) => (
-          <div 
+          <div
             key={s.id}
             onClick={() => setSelectedSuspect(s)}
-            className={`cursor-pointer transition-all border p-4 ${
-              selectedSuspect?.id === s.id ? 'border-[#d4af37] bg-white/5' : 'border-white/5 hover:border-white/20'
-            }`}
+            className={`cursor-pointer transition-all border p-4 ${selectedSuspect?.id === s.id ? 'border-[#d4af37] bg-white/5' : 'border-white/5 hover:border-white/20'
+              }`}
           >
             <img src={s.imageUrl} alt={s.name} className="w-full aspect-[4/5] object-cover mb-4 grayscale hover:grayscale-0 transition-all duration-500" />
             <div className="text-xs uppercase tracking-widest text-[#d4af37] mb-1">{s.role}</div>
@@ -40,7 +112,7 @@ const SuspectsView: React.FC<SuspectsViewProps> = ({ suspects, statements, onUpd
             <div>
               <h4 className="text-xs uppercase tracking-[0.2em] text-[#d4af37] mb-4">Official Profile</h4>
               <p className="text-white/80 leading-relaxed mb-8 italic">"{selectedSuspect.description}"</p>
-              
+
               <div className="space-y-6">
                 <section>
                   <h5 className="text-[10px] uppercase tracking-widest text-white/40 mb-2">Verified Alibi</h5>
@@ -74,10 +146,10 @@ const SuspectsView: React.FC<SuspectsViewProps> = ({ suspects, statements, onUpd
                   </div>
                 )}
               </div>
-              
+
               <div className="mt-8">
                 <h5 className="text-[10px] uppercase tracking-widest text-white/40 mb-2">Investigator Notes</h5>
-                <textarea 
+                <textarea
                   className="w-full bg-transparent border border-white/5 p-4 text-sm text-white/60 focus:border-[#d4af37] transition-colors outline-none h-32 resize-none"
                   placeholder="Draft your observations here..."
                   defaultValue={selectedSuspect.notes}

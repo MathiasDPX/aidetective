@@ -1,7 +1,7 @@
 
 export type CaseStatus = 'Open' | 'Solved';
 
-export interface Suspect {
+export interface Suspect{
   id: string;
   name: string;
   role: string;
@@ -49,7 +49,7 @@ export interface InvestigationCase {
   title: string;
   description: string;
   status: CaseStatus;
-  suspects: Suspect[];
+  parties: Suspect[];
   clues: Clue[];
   timeline: TimelineEvent[];
   statements: Statement[];

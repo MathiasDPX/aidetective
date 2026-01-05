@@ -6,7 +6,7 @@ export const MOCK_CASES: InvestigationCase[] = [
     title: 'The Inheritor\'s Silence',
     description: 'A wealthy patriarch, Arthur Sterling, was found dead in his locked study. No sign of struggle, but the scent of bitter almonds lingers in the air.',
     status: 'Open',
-    suspects: [
+    parties: [
       {
         id: 's1',
         name: 'Julian Sterling',
