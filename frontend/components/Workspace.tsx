@@ -42,13 +42,10 @@ const Workspace: React.FC<WorkspaceProps> = ({ activeCase, onBack, onUpdateCase 
   };
 
   const handleAddSuspect = async (suspect: Partial<any>) => {
-    console.log("Workspace handleAddSuspect called", suspect);
     try {
       // Add default placeholder if missing
       const s = { ...suspect, role: suspect.role || 'Unknown', description: suspect.description || 'No description' };
-      console.log("Sending suspect to dbService", s);
       const newSuspect = await dbService.addSuspect(activeCase.id, s);
-      console.log("DbService returned:", newSuspect);
       onUpdateCase({ ...activeCase, parties: [...activeCase.parties, newSuspect] });
     } catch (e: any) {
       console.error("Failed to add suspect", e);
@@ -97,6 +94,7 @@ const Workspace: React.FC<WorkspaceProps> = ({ activeCase, onBack, onUpdateCase 
           >
             <BackIcon />
           </button>
+          <img src="/logo.png" alt="Logo" className="w-12 h-12 rounded-lg object-cover border border-[#d4af37]/20 hidden lg:block shadow-sm" />
           <div className="hidden lg:block">
             <span className="text-[10px] uppercase tracking-widest text-[#d4af37] block">Active Case</span>
             <h2 className="text-xs font-semibold text-white/80 uppercase truncate">{activeCase.title}</h2>

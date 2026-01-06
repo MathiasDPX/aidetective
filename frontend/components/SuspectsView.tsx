@@ -16,16 +16,34 @@ const SuspectsView: React.FC<SuspectsViewProps> = ({ suspects, statements, onUpd
 
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("SuspectsView handleAdd triggered", newSuspect);
     if (onAddSuspect && newSuspect.name && newSuspect.role) {
-      console.log("Calling onAddSuspect");
       onAddSuspect(newSuspect);
       setNewSuspect({ name: '', role: '', motive: '', alibi: '' });
       setIsAdding(false);
     } else {
-      console.warn("Validation failed or handler missing:", { onAddSuspect: !!onAddSuspect, name: newSuspect.name, role: newSuspect.role });
       alert("Please fill in at least the Name and Role.");
     }
+  };
+
+  const getPlaceholderColor = (name: string) => {
+    const colors = [
+      'from-red-900/40 to-red-800/20',
+      'from-blue-900/40 to-blue-800/20',
+      'from-green-900/40 to-green-800/20',
+      'from-yellow-900/40 to-yellow-800/20',
+      'from-purple-900/40 to-purple-800/20',
+      'from-pink-900/40 to-pink-800/20',
+      'from-indigo-900/40 to-indigo-800/20',
+    ];
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+      hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return colors[Math.abs(hash) % colors.length];
+  };
+
+  const getInitials = (name: string) => {
+    return name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
   };
 
   return (
@@ -96,12 +114,19 @@ const SuspectsView: React.FC<SuspectsViewProps> = ({ suspects, statements, onUpd
           <div
             key={s.id}
             onClick={() => setSelectedSuspect(s)}
-            className={`cursor-pointer transition-all border p-4 ${selectedSuspect?.id === s.id ? 'border-[#d4af37] bg-white/5' : 'border-white/5 hover:border-white/20'
+            className={`cursor-pointer transition-all border p-4 group overflow-hidden relative ${selectedSuspect?.id === s.id ? 'border-[#d4af37] bg-white/5' : 'border-white/5 hover:border-white/20'
               }`}
           >
-            <img src={s.imageUrl} alt={s.name} className="w-full aspect-[4/5] object-cover mb-4 grayscale hover:grayscale-0 transition-all duration-500" />
-            <div className="text-xs uppercase tracking-widest text-[#d4af37] mb-1">{s.role}</div>
-            <h3 className="text-xl font-serif text-white">{s.name}</h3>
+            {s.imageUrl && s.imageUrl.startsWith('http') ? (
+              <img src={s.imageUrl} alt={s.name} className="w-full aspect-[4/5] object-cover mb-4 grayscale group-hover:grayscale-0 transition-all duration-500" />
+            ) : (
+              <div className={`w-full aspect-square mb-4 bg-gradient-to-br ${getPlaceholderColor(s.name)} flex items-center justify-center border border-white/5`}>
+                <span className="text-4xl font-serif text-white/20 font-bold">{getInitials(s.name)}</span>
+              </div>
+            )}
+
+            <div className="text-xs uppercase tracking-widest text-[#d4af37] mb-1 truncate">{s.role}</div>
+            <h3 className="text-xl font-serif text-white truncate">{s.name}</h3>
           </div>
         ))}
       </div>

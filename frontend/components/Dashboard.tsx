@@ -15,10 +15,10 @@ const Dashboard: React.FC<DashboardProps> = ({ cases, onSelectCase, onNewCase })
         <header className="mb-16 border-b border-white/10 pb-10 flex justify-between items-end">
           <div className="space-y-3">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[#d4af37]/20 to-[#d4af37]/5 border border-[#d4af37]/30 flex items-center justify-center">
-                <span className="text-2xl font-serif text-[#d4af37] font-bold">B</span>
+              <div className="w-20 h-20 rounded-xl overflow-hidden border border-[#d4af37]/30 shadow-lg shadow-[#d4af37]/10">
+                <img src="/logo.png" alt="Benoit Blanc Logo" className="w-full h-full object-cover" />
               </div>
-          <div>
+              <div>
                 <h1 className="text-xs uppercase tracking-[0.4em] text-[#d4af37]/80 font-medium">Benoit Blanc</h1>
                 <h2 className="text-4xl md:text-5xl font-serif font-semibold text-white mt-1">Investigation Suite</h2>
               </div>
@@ -27,7 +27,7 @@ const Dashboard: React.FC<DashboardProps> = ({ cases, onSelectCase, onNewCase })
               "The truth is like a donut, my friend. It has a hole in the center, and only when we fill that hole with logic can we see the whole shape."
             </p>
           </div>
-          <button 
+          <button
             onClick={onNewCase}
             className="px-6 py-3 bg-gradient-to-r from-white to-white/90 text-black font-semibold hover:from-[#d4af37] hover:to-[#d4af37]/90 hover:text-white transition-all shadow-lg hover:shadow-[#d4af37]/20 rounded-sm uppercase tracking-wider text-xs"
           >
@@ -43,36 +43,35 @@ const Dashboard: React.FC<DashboardProps> = ({ cases, onSelectCase, onNewCase })
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {cases.map((c) => (
-            <div 
-              key={c.id}
-              onClick={() => onSelectCase(c)}
+            {cases.map((c) => (
+              <div
+                key={c.id}
+                onClick={() => onSelectCase(c)}
                 className="group cursor-pointer relative overflow-hidden border border-white/10 p-6 hover:border-[#d4af37]/50 transition-all duration-300 bg-gradient-to-br from-white/[0.03] to-transparent backdrop-blur-sm hover:shadow-2xl hover:shadow-[#d4af37]/10"
-            >
+              >
                 {/* Hover Effect Background */}
                 <div className="absolute inset-0 bg-gradient-to-br from-[#d4af37]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                
+
                 {/* Content */}
                 <div className="relative z-10">
-              <div className="flex justify-between items-start mb-4">
-                    <span className={`text-[10px] uppercase tracking-widest px-3 py-1 border backdrop-blur-sm ${
-                      c.status === 'Open' 
-                        ? 'border-red-500/50 text-red-400 bg-red-500/10' 
-                        : 'border-green-500/50 text-green-400 bg-green-500/10'
-                    }`}>
-                  {c.status}
-                </span>
+                  <div className="flex justify-between items-start mb-4">
+                    <span className={`text-[10px] uppercase tracking-widest px-3 py-1 border backdrop-blur-sm ${c.status === 'Open'
+                      ? 'border-red-500/50 text-red-400 bg-red-500/10'
+                      : 'border-green-500/50 text-green-400 bg-green-500/10'
+                      }`}>
+                      {c.status}
+                    </span>
                     <span className="text-[10px] text-white/20 font-mono">#{c.id.split('-')[1]}</span>
-              </div>
-                  
+                  </div>
+
                   <h3 className="text-2xl font-serif mb-3 group-hover:text-[#d4af37] transition-colors duration-300 text-white font-semibold">
                     {c.title}
                   </h3>
-                  
+
                   <p className="text-sm text-white/50 line-clamp-3 leading-relaxed mb-6 font-light">
-                {c.description}
-              </p>
-                  
+                    {c.description}
+                  </p>
+
                   {/* Stats */}
                   <div className="flex items-center gap-4 mb-6 text-xs text-white/30">
                     <span className="flex items-center gap-1">
@@ -88,18 +87,18 @@ const Dashboard: React.FC<DashboardProps> = ({ cases, onSelectCase, onNewCase })
                       {c.statements.length} statements
                     </span>
                   </div>
-                  
+
                   {/* CTA */}
                   <div className="flex items-center text-xs font-semibold uppercase tracking-widest text-[#d4af37] group-hover:gap-3 transition-all">
-                Begin Investigation
+                    Begin Investigation
                     <svg className="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
                   </div>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
         )}
       </div>
     </div>
