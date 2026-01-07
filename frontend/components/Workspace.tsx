@@ -59,7 +59,7 @@ const Workspace: React.FC<WorkspaceProps> = ({ activeCase, onBack, onUpdateCase 
 
         <div className="p-6 border-t border-white/5 flex flex-col gap-2 hidden lg:flex">
           <div className="text-[10px] text-white/20 uppercase tracking-widest pt-2">
-            &copy; 2026 Les Détéctives
+            <a href="https://github.com/MathiasDPX/aidetective/tree/midnight-case" target="_blank">&copy; 2026 Les Détéctives</a>
           </div>
         </div>
       </nav>
