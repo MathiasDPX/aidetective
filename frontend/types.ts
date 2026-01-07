@@ -48,7 +48,6 @@ export interface Theory {
 }
 
 export interface InvestigationCase {
-  id: string;
   title: string;
   description: string;
   status: CaseStatus;

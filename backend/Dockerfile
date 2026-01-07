@@ -11,7 +11,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install "fastapi[standard]"
 
 COPY main.py models.py populate_db.py ./
-COPY favicon.ico default_pic.jpg ./
+COPY favicon.ico ./
 
 EXPOSE 8000
 

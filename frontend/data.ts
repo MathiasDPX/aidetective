@@ -1,10 +1,8 @@
 import { InvestigationCase } from './types';
 
-export const MOCK_CASES: InvestigationCase[] = [
-  {
-    id: 'case-001',
-    title: 'The Inheritor\'s Silence',
-    description: 'A wealthy patriarch, Arthur Sterling, was found dead in his locked study. No sign of struggle, but the scent of bitter almonds lingers in the air.',
+export const MOCK_CASE: InvestigationCase = {
+    title: 'Aunt Bethesda\'s Last Night',
+    description: 'Aunt Bethesda was killed on the 31st of December 2025 by one of her closest assistants.',
     status: 'Open',
     parties: [
       {
@@ -127,15 +125,14 @@ export const MOCK_CASES: InvestigationCase[] = [
       }
     ],
     theories: [
-      {
-        id: 'th1',
-        title: 'The Prodigal Son\'s Revenge',
-        content: 'Julian used the argument at 10:15 PM to deliver the poison. The letter in the fireplace confirms Arthur was pressuring him.',
-        linkedClues: ['c2', 'c1'],
-        linkedSuspects: ['s1'],
-        createdAt: new Date().toISOString()
-      }
-    ]
-  }
-];
+       {
+         id: 'th1',
+         title: 'The Prodigal Son\'s Revenge',
+         content: 'Julian used the argument at 10:15 PM to deliver the poison. The letter in the fireplace confirms Arthur was pressuring him.',
+         linkedClues: ['c2', 'c1'],
+         linkedSuspects: ['s1'],
+         createdAt: new Date().toISOString()
+       }
+     ]
+    };
 
