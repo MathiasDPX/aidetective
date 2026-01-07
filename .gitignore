@@ -1,9 +1,8 @@
 # Created by https://www.toptal.com/developers/gitignore/api/react,python
 # Edit at https://www.toptal.com/developers/gitignore?templates=react,python
 
-backend/images/*
-*.db*
-*.db
+public/parties/*
+!public/parties/.keep
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
