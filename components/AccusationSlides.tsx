@@ -197,7 +197,7 @@ const AccusationSlides: React.FC<AccusationSlidesProps> = ({ result = HARDCODED_
                     <div 
                         className="animate-in zoom-in duration-1000 space-y-8 relative w-full h-[600px] flex flex-col justify-center items-center"
                         style={{
-                            backgroundImage: `url('/api/parties/a754f37b-6760-4148-895d-0eb7fb73ed5e/image')`,
+                            backgroundImage: `url('/parties/renran.jpg')`,
                             backgroundSize: 'cover',
                             backgroundPosition: 'center'
                         }}
