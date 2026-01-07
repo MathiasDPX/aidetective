@@ -88,7 +88,7 @@ const PartiesView: React.FC<PartiesViewProps> = ({ parties, statements }) => {
           >
             {/* Image */}
             <div className="relative">
-              {s.imageUrl && s.imageUrl.startsWith('http') ? (
+              {s.imageUrl ? (
                 <img src={s.imageUrl} alt={s.name} className="w-full aspect-[4/5] object-cover mb-4 grayscale group-hover:grayscale-0 transition-all duration-500" />
               ) : (
                 <div className={`w-full aspect-square mb-4 bg-gradient-to-br ${getPlaceholderColor(s.name)} flex items-center justify-center border border-white/5`}>

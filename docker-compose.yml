@@ -3,12 +3,10 @@ version: '3.8'
 services:
   aidetective:
     build:
-      context: .
+      context: ./frontend
       dockerfile: Dockerfile
     container_name: aidetective
     ports:
-      - "8000:8000"
-    volumes:
-      - ./backend/database.db:/app/backend/database.db
+      - "3000:3000"
     env_file: ".env"
     restart: unless-stopped

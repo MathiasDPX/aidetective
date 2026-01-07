@@ -1,50 +1,37 @@
 
 import { InvestigationCase, Suspect, Clue, TimelineEvent, Statement, Theory } from '../types';
 
-const API_URL = `http://${window.location.hostname}:${window.location.port}`;
-
 class DbService {
 
-    private async fetchJson(endpoint: string, options: RequestInit = {}) {
-        const res = await fetch(`${API_URL}${endpoint}`, options);
-        if (!res.ok) {
-            const text = await res.text();
-            throw new Error(`API error: ${res.status} ${res.statusText} - ${text}`);
-        }
-        return res.json();
-    }
-
     async getCase(): Promise<InvestigationCase> {
-        const [caseData, parties, evidences, theories, timelines] = await Promise.all([
-            this.fetchJson('/api/case'),
-            this.fetchJson('/api/parties'),
-            this.fetchJson('/api/evidences'),
-            this.fetchJson('/api/theories'),
-            this.fetchJson('/api/timelines'),
-        ]);
+        const response = await fetch('/case.json');
+        if (!response.ok) {
+            throw new Error(`Failed to load case config: ${response.status}`);
+        }
+        const data = await response.json();
 
         return {
-            title: caseData.name,
-            description: caseData.short_description || '',
+            title: data.case.name,
+            description: data.case.short_description || '',
             status: 'Open',
-            parties: Object.entries(parties).map(([id, p]: [string, any]) => ({
-                id,
+            parties: data.parties.map((p: any) => ({
+                id: p.id,
                 name: p.name,
                 role: p.role,
                 description: p.description || '',
                 alibi: p.alibi || '',
                 motive: '',
                 notes: '',
-                imageUrl: p.image && p.image.startsWith('/api') ? `${API_URL}${p.image}` : p.image
+                imageUrl: p.image
             })),
-            clues: (evidences as any[]).map(e => ({
+            clues: data.evidences.map((e: any) => ({
                 id: e.id,
                 title: e.name,
                 description: e.description || '',
                 source: e.place || '',
                 linkedSuspects: e.suspects || []
             })),
-            timeline: (timelines as any[]).map(t => {
+            timeline: data.timelines.map((t: any) => {
                 const d = new Date(t.timestamp);
                 return {
                     id: t.id,
@@ -56,8 +43,8 @@ class DbService {
                     isGap: false
                 };
             }),
-            theories: Object.entries(theories).map(([id, t]: [string, any]) => ({
-                id,
+            theories: data.theories.map((t: any) => ({
+                id: t.id,
                 title: t.name,
                 content: t.content,
                 linkedClues: [],

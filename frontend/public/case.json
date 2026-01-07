@@ -1,0 +1,169 @@
+{
+  "case": {
+    "name": "Aunt Bethesda",
+    "short_description": "Aunt Bethesda was killed on the 31st of December 2025 by one of her closest assistant"
+  },
+  "parties": [
+    {
+      "id": "party-1",
+      "name": "Renran",
+      "role": "detective",
+      "description": "",
+      "alibi": "",
+      "image": "/parties/renran.jpg"
+    },
+    {
+      "id": "party-2",
+      "name": "Clay",
+      "role": "detective",
+      "description": "",
+      "alibi": "",
+      "image": "/parties/clay.jpg"
+    },
+    {
+      "id": "party-3",
+      "name": "Reem",
+      "role": "detective",
+      "description": "",
+      "alibi": "",
+      "image": "/parties/reem.jpg"
+    },
+    {
+      "id": "party-4",
+      "name": "Alex",
+      "role": "detective",
+      "description": "",
+      "alibi": "",
+      "image": "/parties/alex.jpg"
+    },
+    {
+      "id": "party-5",
+      "name": "Annabel",
+      "role": "detective",
+      "description": "",
+      "alibi": "",
+      "image": "/parties/annabel.jpg"
+    },
+    {
+      "id": "party-6",
+      "name": "Euan",
+      "role": "suspect",
+      "description": "Estate Manager",
+      "alibi": "",
+      "image": "/parties/william.jpg"
+    },
+    {
+      "id": "party-7",
+      "name": "Tongyu",
+      "role": "suspect",
+      "description": "Gardener",
+      "alibi": "",
+      "image": "/parties/tongyu.jpg"
+    },
+    {
+      "id": "party-8",
+      "name": "Herby",
+      "role": "suspect",
+      "description": "Healer",
+      "alibi": "",
+      "image": "/parties/herby.jpg"
+    },
+    {
+      "id": "party-9",
+      "name": "Kacper",
+      "role": "suspect",
+      "description": "Cook",
+      "alibi": "",
+      "image": "/parties/kacper.jpg"
+    },
+    {
+      "id": "party-10",
+      "name": "Jane",
+      "role": "suspect",
+      "description": "Social Elite",
+      "alibi": "",
+      "image": "/parties/jane.jpg"
+    },
+    {
+      "id": "party-11",
+      "name": "Aunt Bethesda",
+      "role": "victim",
+      "description": "Our beloved aunt",
+      "alibi": "",
+      "image": "/parties/bethesda.jpg"
+    }
+  ],
+  "timelines": [
+    {
+      "id": "timeline-1",
+      "timestamp": 1767221999000,
+      "place": "Aunt's bedroom",
+      "name": "Aunt found dead",
+      "description": "The Aunt Bethesda is found dead in her house"
+    },
+    {
+      "id": "timeline-2",
+      "timestamp": 1767124859000,
+      "place": "Living room",
+      "name": "Argument with Tongyu",
+      "description": "The nights before the murder, Tongyu and the aunt had a big argument"
+    },
+    {
+      "id": "timeline-3",
+      "timestamp": 1767214800000,
+      "place": "Kitchen",
+      "name": "Tea with Herby",
+      "description": "The night of the murder, Herby and the aunt shared a cup of tea"
+    },
+    {
+      "id": "timeline-4",
+      "timestamp": 1767679200000,
+      "place": "Aunt's office",
+      "name": "Kacper's letter",
+      "description": "A couple days after the event, Jane found a letter from Kacper in Aunt's office. He was begging her to give him a job as a cook, regardless of the wages and hours she requires as he heard she was a woman who values second chances."
+    }
+  ],
+  "theories": [
+    {
+      "id": "theory-1",
+      "name": "The Trusted Servant Theory",
+      "content": "One of the household staff with access to the study poisoned Aunt Bethesda's drink before she retired."
+    },
+    {
+      "id": "theory-2",
+      "name": "The Inheritance Motive Theory",
+      "content": "A family member desperate for their inheritance committed the crime."
+    },
+    {
+      "id": "theory-3",
+      "name": "The Business Rival Theory",
+      "content": "An external party gained access to the estate and eliminated Aunt Bethesda to prevent a business deal."
+    }
+  ],
+  "evidences": [
+    {
+      "id": "evidence-1",
+      "place": "Aunt's office",
+      "description": "The letter sent by Kacper to Aunt Bethesda asking for a j*b",
+      "name": "Kacper's employment letter",
+      "suspects": ["party-9"],
+      "image": null
+    },
+    {
+      "id": "evidence-2",
+      "place": "Police station",
+      "description": "",
+      "name": "Kacper's criminal record",
+      "suspects": ["party-9", "party-6"],
+      "image": null
+    },
+    {
+      "id": "evidence-3",
+      "place": "Midnight & Hawthorn",
+      "description": "Financial record of Jane's debt to her aunt Augusta. She's in 6.7M€ in debt",
+      "name": "Jane's Financial Record",
+      "suspects": ["party-10"],
+      "image": null
+    }
+  ]
+}

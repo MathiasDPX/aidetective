@@ -37,12 +37,9 @@ It helps investigators, writers, and mystery lovers **organize evidence, track t
 ## 🛠 Tech Stack
 
 ### Frontend
-- Modern JavaScript framework
+- React + TypeScript
 - Component-based UI
+- Static case configuration (JSON)
 - Focus on fast iteration and usability
-
-### Backend
-- REST API with tagged endpoints
-- Database integration with DuckDB
 
 
