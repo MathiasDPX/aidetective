@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { InvestigationCase, AccusationResult } from '../types';
-import { aiService } from '../services/aiService';
 import AccusationSlides from './AccusationSlides';
 
 interface AccusationViewProps {
@@ -12,17 +11,8 @@ const AccusationView: React.FC<AccusationViewProps> = ({ activeCase, onPresentCa
   const [status, setStatus] = useState<'entry' | 'analyzing' | 'reveal' | 'submitted'>('entry');
   const [result, setResult] = useState<AccusationResult | null>(null);
 
-  const handleGetKiller = async () => {
-    setStatus('analyzing');
-    try {
-      const accusationResult = await aiService.generateAccusation(activeCase);
-      setResult(accusationResult);
-      setStatus('reveal');
-    } catch (error) {
-      console.error("Failed to generate accusation:", error);
-      // Fallback or error state could go here
-      setStatus('entry');
-    }
+  const handleGetKiller = () => {
+    // AI accusation removed - manual investigation required
   };
 
   const handleComplete = () => {
@@ -91,7 +81,7 @@ const AccusationView: React.FC<AccusationViewProps> = ({ activeCase, onPresentCa
         </button>
 
         <p className="text-white/20 text-xs mt-12 font-serif">
-          Benoit Blanc will analyze the entire case file
+          Button currently disabled - AI feature removed
         </p>
       </div>
     </div>

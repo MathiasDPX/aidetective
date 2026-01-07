@@ -25,11 +25,7 @@ It helps investigators, writers, and mystery lovers **organize evidence, track t
 - Visualize how events connect
 - Easily modify or reorder timeline entries
 
-### 🤖 AI Detective Assistant
-- AI persona inspired by **Benoît Blanc**
-- Helps analyze clues
-- Suggests connections, contradictions, and insights
-- Assists in theory validation
+
 
 ### 🧠 Theory Builder
 - Create and refine **investigation theories**
@@ -49,7 +45,4 @@ It helps investigators, writers, and mystery lovers **organize evidence, track t
 - REST API with tagged endpoints
 - Database integration with DuckDB
 
-### AI
-- LLM-powered assistant
-- Context-aware case analysis
-- Natural language reasoning
+

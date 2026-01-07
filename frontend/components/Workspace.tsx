@@ -7,7 +7,6 @@ import CluesView from './CluesView';
 import StatementsView from './StatementsView';
 import TheoriesView from './TheoriesView';
 import AccusationView from './AccusationView';
-import AIAssistant from './AIAssistant';
 
 interface WorkspaceProps {
   activeCase: InvestigationCase;
@@ -60,7 +59,7 @@ const Workspace: React.FC<WorkspaceProps> = ({ activeCase, onBack, onUpdateCase 
 
         <div className="p-6 border-t border-white/5 flex flex-col gap-2 hidden lg:flex">
           <div className="text-[10px] text-white/20 uppercase tracking-widest pt-2">
-            &copy; 2024 Benoit Blanc Investigation
+            &copy; 2026 Les Détéctives
           </div>
         </div>
       </nav>
@@ -123,16 +122,7 @@ const Workspace: React.FC<WorkspaceProps> = ({ activeCase, onBack, onUpdateCase 
         </div>
       </main>
 
-      {/* Persistent AI Assistant */}
-      <aside className="w-80 lg:w-96 border-l border-white/5 bg-[#0a0a0a] flex flex-col">
-        <AIAssistant
-          activeCase={activeCase}
-          onAnalyzeTimeline={() => setActiveTab('timeline')}
-          onAnalyzeSuspect={(id) => {
-            setActiveTab('parties');
-          }}
-        />
-      </aside>
+
     </div>
   );
 };
