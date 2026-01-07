@@ -12,7 +12,11 @@ const AccusationView: React.FC<AccusationViewProps> = ({ activeCase, onPresentCa
   const [result, setResult] = useState<AccusationResult | null>(null);
 
   const handleGetKiller = () => {
-    // AI accusation removed - manual investigation required
+    setStatus('analyzing');
+    // Simulate brief analysis before revealing the slideshow
+    setTimeout(() => {
+      setStatus('reveal');
+    }, 2000);
   };
 
   const handleComplete = () => {
@@ -50,8 +54,8 @@ const AccusationView: React.FC<AccusationViewProps> = ({ activeCase, onPresentCa
     );
   }
 
-  if (status === 'reveal' && result) {
-    return <AccusationSlides result={result} onComplete={handleComplete} />;
+  if (status === 'reveal') {
+    return <AccusationSlides result={result || undefined} onComplete={handleComplete} />;
   }
 
   return (
@@ -80,9 +84,7 @@ const AccusationView: React.FC<AccusationViewProps> = ({ activeCase, onPresentCa
           </span>
         </button>
 
-        <p className="text-white/20 text-xs mt-12 font-serif">
-          Button currently disabled - AI feature removed
-        </p>
+
       </div>
     </div>
   );

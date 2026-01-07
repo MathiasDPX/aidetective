@@ -87,7 +87,7 @@ class Party:
                      (self.name, self.role, self.description, self.alibi, self.image))
 
 class Evidence:
-    def __init__(self, place, description, name, suspects, image):
+    def __init__(self, place, description, name, suspects, image=None):
         self.place = place
         self.description = description
         self.name = name

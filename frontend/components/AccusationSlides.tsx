@@ -1,12 +1,85 @@
 import React, { useState } from 'react';
+import confetti from 'canvas-confetti';
 import { AccusationResult } from '../types';
 
 interface AccusationSlidesProps {
-    result: AccusationResult;
+    result?: AccusationResult;
     onComplete: () => void;
 }
 
-const AccusationSlides: React.FC<AccusationSlidesProps> = ({ result, onComplete }) => {
+const HARDCODED_RESULT: AccusationResult = {
+    case_overview: {
+        summary: "On the 31st December of 2025, our dear aunt Bethesda got killed and found in her bed at 23:59"
+    },
+    victim_profile: {
+        name: "Aunt Bethesda",
+        background: "Our beloved aunt"
+    },
+    suspects_analysis: [
+        {
+            suspect_id: "1",
+            name: "Jane",
+            initial_suspicion: "Has a lot of debts to her Aunt Augusta which the Aunt death inheritance can easily reimburse",
+            why_not_guilty: ""
+        },
+        {
+            suspect_id: "2",
+            name: "William",
+            initial_suspicion: "Estate manager of the Aunt mansion, may want her death to get the mansion for himself",
+            why_not_guilty: ""
+        },
+        {
+            suspect_id: "3",
+            name: "Tongyu",
+            initial_suspicion: "Had an argument with Aunt Bethesda the day before the murder",
+            why_not_guilty: ""
+        },
+        {
+            suspect_id: "4",
+            name: "Herby",
+            initial_suspicion: "",
+            why_not_guilty: "Had good relation with Aunt Bethesda"
+        },
+        {
+            suspect_id: "5",
+            name: "Kacper",
+            initial_suspicion: "Has a dark past with multiples stay in prison for various horrible crimes",
+            why_not_guilty: "Joined the bright side by getting a job as a cook for Aunt Bethesda"
+        }
+    ],
+    key_evidence: [
+        {
+            evidence_id: "1",
+            description: "Jane's Financial Record showing the multiples debts she has accumulated through the years",
+            importance: "A note on the bottom from Aunt Bethesda telling she (Jane) can no longer be trust with money and her wills will be revised"
+        },
+        {
+            evidence_id: "2",
+            description: "Security footage showing the study door locked from inside with Harlan present",
+            importance: "Key: indicates the killer had intimate knowledge of the home's security system"
+        }
+    ],
+    timeline_reconstruction: [
+        {
+            time: "31/12 23:59",
+            event: "Aunt Bethesda is found dead on her bed",
+            implication: ""
+        }
+    ],
+    motive: {
+        description: "The killer was motivated by nothing she just wanted to kills 4 fun :3c"
+    },
+    method: {
+        description: "The killer used a pack of napkin to choke Aunt Bethesda to death"
+    },
+    killer_reveal: {
+        suspect_id: "67",
+        name: "Renran",
+        reveal_line: "You see, the perfect crime isn't about fooling the detective. It's about fooling yourself by thinking you never did it."
+    }
+};
+
+const AccusationSlides: React.FC<AccusationSlidesProps> = ({ result = HARDCODED_RESULT, onComplete }) => {
     const [currentSlide, setCurrentSlide] = useState(0);
 
     const slides = [
@@ -17,15 +90,24 @@ const AccusationSlides: React.FC<AccusationSlidesProps> = ({ result, onComplete 
         { type: 'timeline', title: 'Timeline Reconstruction' },
         { type: 'motive', title: 'The Motive' },
         { type: 'method', title: 'The Methods' },
-        { type: 'reveal', title: 'The Killer' },
-        { type: 'monologue', title: 'Benoit Blanc\'s Final Words' },
+        { type: 'reveal', title: 'The Killer' }
     ];
 
     const handleNext = () => {
         if (currentSlide < slides.length - 1) {
             setCurrentSlide(prev => prev + 1);
         } else {
-            onComplete();
+            // Trigger confetti effect
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.45, x: 0.575 },
+                colors: ['#d4af37', '#ff6b6b', '#4ecdc4', '#ffe66d', '#a8e6cf']
+            });
+            
+            setTimeout(() => {
+                onComplete();
+            }, 500);
         }
     };
 
@@ -112,26 +194,24 @@ const AccusationSlides: React.FC<AccusationSlidesProps> = ({ result, onComplete 
                 );
             case 'reveal':
                 return (
-                    <div className="animate-in zoom-in duration-1000 space-y-8">
-                        <div className="text-xs uppercase tracking-[0.5em] text-red-500 font-bold animate-pulse">The Killer Is</div>
-                        <h1 className="text-6xl md:text-7xl font-serif text-white font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white to-red-600">
-                            {result.killer_reveal.name}
-                        </h1>
-                        <p className="text-2xl text-white/60 font-serif italic max-w-2xl mx-auto">
-                            "{result.killer_reveal.reveal_line}"
-                        </p>
-                    </div>
-                );
-            case 'monologue':
-                return (
-                    <div className="max-w-3xl mx-auto">
-                        <div className="mb-8 w-20 h-20 mx-auto rounded-full overflow-hidden border-2 border-[#d4af37] opacity-80">
-                            {/* Placeholder for Benoit Blanc avatar */}
-                            <div className="w-full h-full bg-gradient-to-br from-[#d4af37] to-black" />
+                    <div 
+                        className="animate-in zoom-in duration-1000 space-y-8 relative w-full h-[600px] flex flex-col justify-center items-center"
+                        style={{
+                            backgroundImage: `url('/api/parties/a754f37b-6760-4148-895d-0eb7fb73ed5e/image')`,
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center'
+                        }}
+                    >
+                        <div className="absolute inset-0" style={{background: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0))'}} />
+                        <div className="relative z-10 text-center">
+                            <div className="text-xs uppercase tracking-[0.5em] text-red-500 font-bold">The Killer Is</div>
+                            <h1 className="text-6xl md:text-7xl font-serif text-white font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white to-red-600">
+                                {result.killer_reveal.name}
+                            </h1>
+                            <p className="text-2xl text-white/80 font-serif italic max-w-2xl mx-auto">
+                                "{result.killer_reveal.reveal_line}"
+                            </p>
                         </div>
-                        <p className="text-xl md:text-2xl text-white/90 leading-relaxed font-serif italic text-center">
-                            "{result.final_monologue.text}"
-                        </p>
                     </div>
                 );
             default:
