@@ -90,7 +90,7 @@ export class DetectiveAI {
     Title: ${activeCase.title}
     Description: ${activeCase.description}
     Suspects: ${activeCase.parties.map(s => `ID: ${s.id} | Name: ${s.name} | Role: ${s.role} | Desc: ${s.description} | Alibi: ${s.alibi} | Motive: ${s.motive}`).join('\n')}
-    Evidence: ${activeCase.clues.map(c => `ID: ${c.id} | Title: ${c.title} | Desc: ${c.description} | Significance: ${c.confidence}`).join('\n')}
+    Evidence: ${activeCase.clues.map(c => `ID: ${c.id} | Title: ${c.title} | Desc: ${c.description}`).join('\n')}
     Timeline: ${activeCase.timeline.map(t => `Time: ${t.time} | Event: ${t.description} | Involves: ${t.involvedSuspects.join(', ')}`).join('\n')}
     Statements: ${activeCase.statements.map(s => `Speaker: ${s.speakerName} | Content: "${s.content}"`).join('\n')}
     `;

@@ -16,12 +16,12 @@ export interface Clue {
   title: string;
   description: string;
   source: string;
-  confidence: 'Confirmed' | 'Questionable' | 'Disputed';
   linkedSuspects?: string[];
 }
 
 export interface TimelineEvent {
   id: string;
+  title: string;
   time: string;
   date: string;
   description: string;

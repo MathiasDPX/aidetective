@@ -22,11 +22,11 @@ conn.sql("""CREATE TABLE IF NOT EXISTS parties (
 )""")
 conn.sql("""CREATE TABLE IF NOT EXISTS evidences (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    status VARCHAR,
     place VARCHAR,
     description VARCHAR,
     name VARCHAR,
-    suspects UUID[]
+    suspects UUID[],
+    image BLOB DEFAULT NULL
 )""")
 conn.sql("""CREATE TABLE IF NOT EXISTS theories (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -55,16 +55,15 @@ conn.execute("INSERT INTO cases (name, short_description) VALUES (?, ?)",
              (case_name, "Aunt Bethesda was killed on the 31st of December 2025 by one of her closest assistant"))
 
 class Event:
-    def __init__(self, timestamp, place, status, name, description):
+    def __init__(self, timestamp, place, name, description):
         self.timestamp = timestamp
         self.place = place
-        self.status = status
         self.name = name
         self.description = description
 
     def register(self):
-        conn.execute("INSERT INTO timelines_events (timestamp, place, status, name, description) VALUES (?, ?, ?, ?, ?)", 
-                     (self.timestamp, self.place, self.status, self.name, self.description))
+        conn.execute("INSERT INTO timelines_events (timestamp, place, name, description) VALUES (?, ?, ?, ?)", 
+                     (self.timestamp, self.place, self.name, self.description))
 
 class Theory:
     def __init__(self, name, content):
@@ -88,16 +87,16 @@ class Party:
                      (self.name, self.role, self.description, self.alibi, self.image))
 
 class Evidence:
-    def __init__(self, status, place, description, name, suspects):
-        self.status = status
+    def __init__(self, place, description, name, suspects, image):
         self.place = place
         self.description = description
         self.name = name
         self.suspects = suspects
+        
 
     def register(self):
-        conn.execute("INSERT INTO evidences (status, place, description, name, suspects) VALUES (?, ?, ?, ?, ?)",
-                     (self.status, self.place, self.description, self.name, self.suspects))
+        conn.execute("INSERT INTO evidences (place, description, name, suspects) VALUES (?, ?, ?, ?)",
+                    (self.place, self.description, self.name, self.suspects))
 
 # Parties
 parties = [
@@ -110,7 +109,7 @@ parties = [
     Party("Euan", "suspect", "Estate Manager"),
     Party("Tongyu", "suspect", "Gardener"),
     Party("Herby", "suspect", "Healer"),
-    Party("Kasper", "suspect", "Cook"),
+    Party("Kacper", "suspect", "Cook"),
     Party("Jane", "suspect", "Social Elite"),
 
     Party("Aunt Bethesda", "victim", "Our beloved aunt")
@@ -124,10 +123,10 @@ for party in parties:
 
 # Timeline events
 events = [
-    Event(1704067200000, "Dining Hall", "Complete", "New Year's Eve Dinner Begins", "The household gathers for the annual celebration"),
-    Event(1704074400000, "Study", "Complete", "Aunt Bethesda Retires", "Aunt Bethesda excuses herself from the party"),
-    Event(1704078000000, "Study", "Suspicious", "Unusual Sound", "A dull thud heard from the study"),
-    Event(1704081600000, "Study", "Discovered", "Body Found", "Aunt Bethesda found deceased in her study")
+    Event(1767221999000, "Aunt's bedroom", "Aunt found dead", "The Aunt Bethesda is found dead in her house"),
+    Event(1767124859000, "Living room", "Argument with Tongyu", "The nights before the murder, Tongyu and the aunt had a big argument"),
+    Event(1767214800000, "Kitchen", "Tea with Herby", "The night of the murder, Herby and the aunt shared a cup of tea"),
+    Event(1767679200000, "Aunt's office", "Kacper's letter", "A couple days after the event, Jane found a letter from Kacper in Aunt's office. He was begging her to give him a job as a cook, regardless of the wages and hours she requires as he heard she was a woman who values second chances.")
 ]
 
 for event in events:
@@ -142,6 +141,20 @@ theories = [
 
 for theory in theories:
     theory.register()
+
+# Evidences
+# Get suspect IDs
+suspect_rows = conn.execute("SELECT id, name FROM parties WHERE role = 'suspect'").fetchall()
+suspects_by_name = {row[1]: row[0] for row in suspect_rows}
+
+evidences = [
+    Evidence("Aunt's office", "The letter sent by Kacper to Aunt Bethesda asking for a j*b", "Kacper's employment letter", [suspects_by_name.get("Kacper")]),
+    Evidence("Police station", "", "Kacper's criminal record", [suspects_by_name.get("Kacper"), suspects_by_name.get("Euan")]),
+    Evidence("Midnight & Hawthorn", "Financial record of Jane's debt to her aunt Augusta. She's in 6.7M€ in debt", "Jane's Financial Record", [suspects_by_name.get("Jane")])
+]
+
+for evidence in evidences:
+    evidence.register()
 
 conn.commit()
 print("Database populated successfully with single case: Aunt Bethesda")

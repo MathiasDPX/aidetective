@@ -52,9 +52,14 @@ const TimelineView: React.FC<TimelineViewProps> = ({ timeline, suspects }) => {
               {/* Event card */}
               <div className={`p-6 border transition-all ${event.isGap ? 'border-white/5 bg-transparent' : 'border-white/10 bg-white/5 hover:border-[#d4af37]/30'}`}>
                 <div className="flex justify-between items-start mb-2">
-                  <time className="text-xs font-mono text-[#d4af37] uppercase tracking-widest">
-                    {event.date} at {event.time}
-                  </time>
+                  <div className="flex flex-col gap-1">
+                    <time className="text-lg font-bold text-[#d4af37] font-mono">
+                      {event.title}
+                    </time>
+                    <time className="text-xs font-mono text-white/60 uppercase tracking-widest">
+                      {event.date} / {event.time}
+                    </time>
+                  </div>
                   {event.isGap && <span className="text-[10px] uppercase text-white/30">⏸ Gap in timeline</span>}
                 </div>
 

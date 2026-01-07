@@ -27,7 +27,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Thread-local storage for DuckDB connections
 _thread_local = threading.local()
 
 def get_conn():
@@ -36,12 +35,11 @@ def get_conn():
         _thread_local.conn = duckdb.connect("database.db")
     return _thread_local.conn
 
-# Initialize main connection for schema
 conn = get_conn()
 
 get_conn().sql("CREATE TABLE IF NOT EXISTS cases (name VARCHAR PRIMARY KEY, detective VARCHAR, short_description VARCHAR DEFAULT NULL)")
 get_conn().sql("CREATE TABLE IF NOT EXISTS parties (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), name VARCHAR, role VARCHAR, description VARCHAR DEFAULT NULL, alibi VARCHAR DEFAULT NULL, image BLOB DEFAULT NULL)")
-get_conn().sql("CREATE TABLE IF NOT EXISTS evidences (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), status VARCHAR, place VARCHAR, description VARCHAR, name VARCHAR, suspects UUID[])")
+get_conn().sql("CREATE TABLE IF NOT EXISTS evidences (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), place VARCHAR, description VARCHAR, name VARCHAR, suspects UUID[], image BLOB DEFAULT NULL)")
 get_conn().sql("CREATE TABLE IF NOT EXISTS theories (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), name VARCHAR, content VARCHAR)")
 get_conn().sql("CREATE TABLE IF NOT EXISTS timelines_events (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), timestamp BIGINT, place VARCHAR, status VARCHAR, name VARCHAR, description VARCHAR)")
 
@@ -111,9 +109,9 @@ def get_party_image(id):
 
 @app.get("/api/evidences", tags=["evidences"])
 def get_evidences():
-    result = get_conn().execute("SELECT id, status, place, description, name, suspects FROM evidences")
-    data = fetch_dict(result)
-    return data
+     result = get_conn().execute("SELECT id, place, description, name, suspects FROM evidences")
+     data = fetch_dict(result)
+     return data
 
 
 @app.get("/api/theories", tags=["theories"])

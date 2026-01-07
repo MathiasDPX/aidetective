@@ -12,35 +12,17 @@ interface CluesViewProps {
 }
 
 const CluesView: React.FC<CluesViewProps> = ({ clues, suspects }) => {
-  const [filter, setFilter] = useState<'All' | 'Confirmed' | 'Questionable' | 'Disputed'>('All');
-
-  const filteredClues = clues.filter(c => filter === 'All' || c.confidence === filter);
-
   return (
     <div className="animate-in fade-in duration-700">
       <div className="flex justify-between items-end mb-8">
         <div>
           <h2 className="text-4xl font-serif text-white">Evidence Locker</h2>
-          <span className="text-xs text-white/30 uppercase tracking-widest">{filteredClues.length} Items Cataloged</span>
+          <span className="text-xs text-white/30 uppercase tracking-widest">{clues.length} Items Cataloged</span>
         </div>
       </div>
 
-      {/* Filter Tabs */}
-      <div className="flex gap-4 mb-8 border-b border-white/5 pb-4">
-        {['All', 'Confirmed', 'Questionable', 'Disputed'].map((f) => (
-          <button
-            key={f}
-            onClick={() => setFilter(f as any)}
-            className={`text-[10px] uppercase tracking-[0.2em] transition-all ${filter === f ? 'text-[#d4af37] border-b border-[#d4af37] pb-1' : 'text-white/30 hover:text-white/60'
-              }`}
-          >
-            {f}
-          </button>
-        ))}
-      </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {filteredClues.map((clue) => {
+         {clues.map((clue) => {
           return (
             <div
               key={clue.id}
@@ -50,13 +32,9 @@ const CluesView: React.FC<CluesViewProps> = ({ clues, suspects }) => {
               <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/5 rounded-full blur-3xl group-hover:bg-[#d4af37]/10 transition-colors" />
 
               <div>
-                <div className="flex justify-between items-start mb-6">
-                  <span className={`text-[10px] uppercase tracking-widest px-2 py-0.5 border ${clue.confidence === 'Confirmed' ? 'border-green-500/50 text-green-400' : 'border-yellow-500/50 text-yellow-400'
-                    }`}>
-                    {clue.confidence}
-                  </span>
-                  <span className="text-[10px] text-white/30 font-mono">{clue.source}</span>
-                </div>
+                 <div className="flex justify-between items-start mb-6">
+                   <span className="text-[10px] text-white/30 font-mono">{clue.source}</span>
+                 </div>
 
                 <h3 className="text-2xl font-serif text-white mb-3 group-hover:text-[#d4af37] transition-colors">{clue.title}</h3>
                 <p className="text-sm text-white/50 leading-relaxed italic mb-4">

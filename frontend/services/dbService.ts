@@ -42,14 +42,14 @@ class DbService {
                 title: e.name,
                 description: e.description || '',
                 source: e.place || '',
-                confidence: e.status as 'Confirmed' | 'Questionable' | 'Disputed' || 'Questionable',
                 linkedSuspects: e.suspects || []
             })),
             timeline: (timelines as any[]).map(t => {
                 const d = new Date(t.timestamp);
                 return {
                     id: t.id,
-                    time: t.name || (isNaN(d.getTime()) ? '' : d.toTimeString().split(' ')[0].substring(0, 5)),
+                    title: t.name || '',
+                    time: isNaN(d.getTime()) ? '' : d.toTimeString().split(' ')[0].substring(0, 8),
                     date: isNaN(d.getTime()) ? '' : d.toISOString().split('T')[0],
                     description: t.description || '',
                     involvedSuspects: [],
