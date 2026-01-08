@@ -59,7 +59,7 @@ const CluesView: React.FC<CluesViewProps> = ({ clues, suspects }) => {
 
               {clue.document && (
               <div className="flex items-center justify-between border-t border-white/5 pt-4">
-                  <button className="text-[10px] uppercase tracking-widest text-white/30"><a href={clue.document} target="_blank">View Document</a></button>
+                  <button className="text-[10px] uppercase tracking-widest text-white/30"><a href={`${import.meta.env.BASE_URL}${clue.document}`} target="_blank">View Document</a></button>
               </div>
               )}
             </div>
