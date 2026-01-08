@@ -4,7 +4,7 @@ import { InvestigationCase, Suspect, Clue, TimelineEvent, Statement, Theory } fr
 class DbService {
 
     async getCase(): Promise<InvestigationCase> {
-        const response = await fetch('/case.json');
+        const response = await fetch('./case.json');
         if (!response.ok) {
             throw new Error(`Failed to load case config: ${response.status}`);
         }
