@@ -14,6 +14,7 @@ interface PartiesViewProps {
 const PartiesView: React.FC<PartiesViewProps> = ({ parties, statements }) => {
   const [selectedParty, setSelectedParty] = useState<Suspect | null>(parties[0] || null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [failedImages, setFailedImages] = useState<Set<string>>(new Set());
 
   const filteredParties = parties.filter(s =>
     s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -43,6 +44,10 @@ const PartiesView: React.FC<PartiesViewProps> = ({ parties, statements }) => {
 
   const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+  };
+
+  const handleImageError = (partyId: string) => {
+    setFailedImages(prev => new Set(prev).add(partyId));
   };
 
   return (
@@ -88,8 +93,13 @@ const PartiesView: React.FC<PartiesViewProps> = ({ parties, statements }) => {
           >
             {/* Image */}
             <div className="relative">
-              {s.imageUrl ? (
-                <img src={s.imageUrl} alt={s.name} className="w-full aspect-[4/5] object-cover mb-4 grayscale group-hover:grayscale-0 transition-all duration-500" />
+              {s.imageUrl && !failedImages.has(s.id) ? (
+                <img 
+                  src={s.imageUrl} 
+                  alt={s.name} 
+                  className="w-full aspect-[4/5] object-cover mb-4 grayscale group-hover:grayscale-0 transition-all duration-500"
+                  onError={() => handleImageError(s.id)}
+                />
               ) : (
                 <div className={`w-full aspect-square mb-4 bg-gradient-to-br ${getPlaceholderColor(s.name)} flex items-center justify-center border border-white/5`}>
                   <span className="text-4xl font-serif text-white/20 font-bold">{getInitials(s.name)}</span>
@@ -108,7 +118,7 @@ const PartiesView: React.FC<PartiesViewProps> = ({ parties, statements }) => {
           <div className="grid md:grid-cols-2 gap-12">
             <div>
               <h4 className="text-xs uppercase tracking-[0.2em] text-[#d4af37] mb-4">Official Profile</h4>
-              <p className="text-white/80 leading-relaxed mb-8 italic">"{selectedParty.description}"</p>
+              <p className="text-white/80 leading-relaxed mb-8 italic">{selectedParty.description}</p>
               <div className="space-y-6">
                 <section>
                   <h5 className="text-[10px] uppercase tracking-widest text-white/40 mb-2">Verified Alibi</h5>
@@ -131,9 +141,9 @@ const PartiesView: React.FC<PartiesViewProps> = ({ parties, statements }) => {
                 {statements.filter(st => st.speakerId === selectedParty.id).map(st => (
                   <div key={st.id} className="relative p-6 bg-[#0a0a0a] border border-white/5 italic">
                     <div className="absolute top-0 right-0 p-2 text-[8px] text-white/20 font-mono">{st.timestamp}</div>
-                    <span className="text-white/40 text-2xl absolute -top-1 left-2 font-serif">"</span>
+                    <span className="text-white/40 text-2xl absolute -top-1 left-2 font-serif"></span>
                     <p className="text-white/70 text-sm relative z-10">{st.content}</p>
-                    <span className="text-white/40 text-2xl absolute -bottom-6 right-4 font-serif">"</span>
+                    <span className="text-white/40 text-2xl absolute -bottom-6 right-4 font-serif"></span>
                   </div>
                 ))}
                 {statements.filter(st => st.speakerId === selectedParty.id).length === 0 && (

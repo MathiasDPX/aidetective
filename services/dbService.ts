@@ -15,7 +15,7 @@ class DbService {
             description: data.case.short_description || '',
             status: 'Open',
             parties: data.parties.map((p: any) => ({
-                id: p.id,
+                id: p.name,
                 name: p.name,
                 role: p.role,
                 description: p.description || '',
@@ -29,7 +29,8 @@ class DbService {
                 title: e.name,
                 description: e.description || '',
                 source: e.place || '',
-                linkedSuspects: e.suspects || []
+                linkedSuspects: e.suspects || [],
+                document: e.document || null
             })),
             timeline: data.timelines.map((t: any) => {
                 const d = new Date(t.timestamp);

@@ -44,10 +44,11 @@ const CluesView: React.FC<CluesViewProps> = ({ clues, suspects }) => {
                 {/* Display Linked Suspects */}
                 {clue.linkedSuspects && clue.linkedSuspects.length > 0 && (
                   <div className="flex flex-wrap gap-2 mb-4">
-                    {clue.linkedSuspects.map(sid => {
-                      const suspect = suspects.find(s => s.id === sid);
+                    {clue.linkedSuspects.map(sname => {
+                      { sname }
+                      const suspect = suspects.find(s => s.name.toLowerCase() === sname.toLowerCase());
                       return suspect ? (
-                        <span key={sid} className="text-[10px] uppercase border border-white/10 px-2 py-0.5 text-white/40">
+                        <span key={sname} className="text-[10px] uppercase border border-white/10 px-2 py-0.5 text-white/40">
                           Link: {suspect.name}
                         </span>
                       ) : null;
@@ -56,9 +57,11 @@ const CluesView: React.FC<CluesViewProps> = ({ clues, suspects }) => {
                 )}
               </div>
 
+              {clue.document && (
               <div className="flex items-center justify-between border-t border-white/5 pt-4">
-                <button className="text-[10px] uppercase tracking-widest text-white/30">View Details</button>
+                  <button className="text-[10px] uppercase tracking-widest text-white/30"><a href={clue.document} target="_blank">View Document</a></button>
               </div>
+              )}
             </div>
           )
         })}

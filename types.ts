@@ -17,6 +17,7 @@ export interface Clue {
   description: string;
   source: string;
   linkedSuspects?: string[];
+  document?: string;
 }
 
 export interface TimelineEvent {
