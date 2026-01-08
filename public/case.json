@@ -8,72 +8,67 @@
       "name": "Renran",
       "role": "detective",
       "description": "",
-      "image": "/parties/renran.jpg"
+      "image": "./parties/renran.jpg"
     },
     {
       "name": "Clay",
       "role": "detective",
       "description": "",
-      "image": "/parties/clay.jpg"
+      "image": "./parties/clay.jpg"
     },
     {
       "name": "Reem",
       "role": "detective",
       "description": "",
-      "image": "/parties/reem.jpg"
+      "image": "./parties/reem.jpg"
     },
     {
       "name": "Alex",
       "role": "detective",
       "description": "",
-      "image": "/parties/alex.jpg"
+      "image": "./parties/alex.jpg"
     },
     {
       "name": "Annabel",
       "role": "detective",
       "description": "",
-      "image": "/parties/annabel.jpg"
+      "image": "./parties/annabel.jpg"
     },
     {
       "name": "William Danials",
       "role": "suspect",
       "description": "Estate Manager\nLooks like Euan Ripper (confirmed to be the same person)",
-      "image": "/parties/william.jpg"
+      "image": "./parties/william.jpg"
     },
     {
       "name": "Tongyu",
       "role": "suspect",
       "description": "Gardener",
-      "alibi": "",
-      "image": "/parties/tongyu.jpg"
+      "image": "./parties/tongyu.jpg"
     },
     { 
       "name": "Herby",
       "role": "suspect",
       "description": "Healer",
-      "alibi": "",
-      "image": "/parties/herby.jpg"
+      "image": "./parties/herby.jpg"
     },
     {
       "name": "Kacper",
       "role": "suspect",
       "description": "Cook",
-      "alibi": "",
-      "image": "/parties/kacper.jpg"
+      "image": "./parties/kacper.jpg"
     },
     {
       "name": "Jane",
       "role": "suspect",
       "description": "Social Elite",
-      "alibi": "",
-      "image": "/parties/jane.jpg"
+      "image": "./parties/jane.jpg"
     },
     {
       "name": "Aunt Bethesda",
       "role": "victim",
       "description": "Our beloved aunt",
-      "alibi": "",
-      "image": "/parties/bethesda.jpg"
+      "image": "./parties/bethesda.jpg"
     },
     {
       "name": "Aunt Augusta",
@@ -125,7 +120,7 @@
       "description": "The letter sent by Kacper to Aunt Bethesda asking for a j*b",
       "name": "Kacper's employment letter",
       "suspects": ["aunt bethesda", "kacper"],
-      "document": "/documents/kacper_letter.jpg"
+      "document": "./documents/kacper_letter.jpg"
     },
     {
       "place": "Police station",
@@ -138,21 +133,21 @@
       "description": "Financial record of Jane's debt to her aunt Augusta. She's in 6.7M€ in debt",
       "name": "Jane's Financial Record",
       "suspects": ["euan", "jane"],
-      "document": "/documents/jane_debts.jpg"
+      "document": "./documents/jane_debts.jpg"
     },
     {
       "place": "Botany book",
       "description": "A page of a botany book containing some restricted herbology compedium for the Mirth Leaf, the Widow's Breath and the Grave Lily",
       "name": "Archivum Botanica",
       "suspects": ["tongyu"],
-      "document": "/documents/archivum_botanica.jpg"
+      "document": "./documents/archivum_botanica.jpg"
     },
     {
       "place": "Aunt Augusta's medical records",
       "description": "Medical Record Form for the death of Aunt Bethesda",
       "name": "Medical Record Form",
       "suspects": ["herby", "aunt augusta"],
-      "document": "/documents/augusta_medical_records.jpg"
+      "document": "./documents/augusta_medical_records.jpg"
     }
   ]
 }
